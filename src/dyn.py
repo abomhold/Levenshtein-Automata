@@ -1,14 +1,16 @@
 import random
 import src.utils as utils
+from utils import targets, max_edits
 
 
 def lev_dyn(str1, str2, max_edits):
     str1_len = len(str1)
     str2_len = len(str2)
+    calculations = 0
 
     # If the length difference is greater than max_edits, it can't be within the edit distance
     if abs(str1_len - str2_len) > max_edits:
-        return False
+        return False, calculations
 
     # Initialize previous_row as a list instead of a range
     previous_row = list(range(str2_len + 1))
@@ -17,6 +19,9 @@ def lev_dyn(str1, str2, max_edits):
     for i in range(1, str1_len + 1):
         current_row[0] = i
         for j in range(1, str2_len + 1):
+
+            calculations += 1
+
             if str1[i - 1] == str2[j - 1]:
                 current_row[j] = previous_row[j - 1]
             else:
@@ -24,19 +29,29 @@ def lev_dyn(str1, str2, max_edits):
 
         # If the minimum value in the current row is greater than max_edits, break early
         if min(current_row) > max_edits:
-            return False
+            return False, calculations
 
         # Swap rows
         previous_row, current_row = current_row, previous_row
 
     # Check if the last computed edit distance is within max_edits
-    return previous_row[str2_len] <= max_edits
+    return previous_row[str2_len] <= max_edits, calculations
+
+
+def solve(target, max_edits, guesses):
+    results = []
+    calcs = 0
+    for guess in guesses:
+        result = lev_dyn(target, guess, max_edits)
+        # print(result)
+        calcs += result[1]
+        results.append(result[0])
+    return results, calcs
 
 
 if __name__ == "__main__":
-    target = utils.σ
-    max_edits = 2
-
-    for test_string in utils.generate_strings():
-        result = lev_dyn(target, test_string, max_edits)
-        print(f"'{test_string}' is within {max_edits} edits of '{target}': {result}")
+    for target in targets:
+        test_strings = utils.generate_strings(target)
+        results, calcs = solve(targets, max_edits, test_strings)
+        print(results)
+        print(calcs)
