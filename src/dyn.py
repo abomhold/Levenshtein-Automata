@@ -8,9 +8,9 @@ def lev_dyn(str1, str2, max_edits):
     str2_len = len(str2)
     calculations = 0
 
-    # If the length difference is greater than max_edits, it can't be within the edit distance
-    if abs(str1_len - str2_len) > max_edits:
-        return False, calculations
+    # # If the length difference is greater than max_edits, it can't be within the edit distance
+    # if abs(str1_len - str2_len) > max_edits:
+    #     return False, calculations
 
     # Initialize previous_row as a list instead of a range
     previous_row = list(range(str2_len + 1))
@@ -43,7 +43,6 @@ def solve(target, max_edits, guesses):
     calcs = 0
     for guess in guesses:
         result = lev_dyn(target, guess, max_edits)
-        # print(result)
         calcs += result[1]
         results.append(result[0])
     return results, calcs
@@ -51,7 +50,7 @@ def solve(target, max_edits, guesses):
 
 if __name__ == "__main__":
     for target in targets:
-        test_strings = utils.generate_strings(target)
+        test_strings = utils.generate_strings(target,100)
         results, calcs = solve(targets, max_edits, test_strings)
-        print(results)
+        # print(results)
         print(calcs)

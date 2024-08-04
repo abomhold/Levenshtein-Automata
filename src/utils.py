@@ -1,71 +1,66 @@
+import multiprocessing
 import random
-from src import dyn
+import time
+import multiprocessing
+from tqdm import tqdm
 
-# import NFA
 
-# Standard Alphabet
-# Σ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-# Binary Alphabet
-# Σ = "01"
-# DNA Alphabet
-# Σ = "ATGC"
-# Target String
-targets = ["AB", "ABC", "ABCD", "ABCDE", "ABCDEF", "ABCDEFG", "ABCDEFGH"]
-distance = 3
-CALCULATIONS = 0
-
-# Maximum length of the string
-# str_len = len(target)
-# Number of strings to generate
-str_cnt = 1000
-# Maximum number of edits
 max_edits = 2
+targets = ["AB", "ABC", "ABCD", "ABCDE",
+           "ABCDEF", "ABCDEFG", "ABCDEFGH", "ABCDEFGHI",
+           "ABCDEFGHIJ", "ABCDEFGHIJK",
+           "ABA", "ABAB", "ABABA", "ABABAB",
+           "ABABABA", "ABABABAB", "ABABABABA", "ABABABABAB",
+           "ABABABABABA"]
 
 
-# Example usage
-def generate_strings(target: str):
-    global str_cnt
-    str_len = len(target)
+def generate_strings(target: str, str_cnt: int) -> list[str]:
+    strs = []
     for _ in range(str_cnt):
-        yield "".join(random.choices(target + "?", k=str_len))
+        strs.append("".join(random.choices(target, k=len(target))))
+    return strs
 
-
-def dynamic(target: str, guesses: list[str], max_edits: int) -> (list[bool], int):
-    return dyn.solve(target, max_edits, guesses)
-
-
-def automaton(target: str, test_strings: list[str], max_edits: int) -> (list[bool], int):
-    return dyn.solve(target, max_edits, test_strings)
-
-
-if __name__ == "__main__":
-    for TARGETS in targets:
-        test_strings = generate_strings(TARGETS)
-        results, calcs = dynamic(TARGETS, test_strings, max_edits)
-        print(f"DYN: {results}")
-        print(f"DYN: {calcs}")
-
-        results, calcs = automaton(TARGETS, test_strings, max_edits)
-        print(f"AUTO: {results}")
-        print(f"AUTO: {calcs}")
-
-        print("")
+#
+# # Define functions to be run in parallel
+# def dynamic(target: str, guesses: list[str],
+#             max_edits: int) -> (list[bool], int):
+#     return dyn.solve(target, max_edits, guesses)
 #
 #
-# def christofides(index):
-#     return ch.solve(PATHS[index])
+# def automaton(target: str, test_strings: list[str],
+#               max_edits: int) -> (list[bool], int):
+#     return auto.solve(target, max_edits,
+#                       test_strings)
 #
 #
-# def nearest_neighbor(index):
-#     return nn.solve(PATHS[index])
+# # Define the multi_process loop
+# def main():
+#     # List of targets and parameters to be processed
+#     # in parallel
+#     global targets, max_edits
+#     results = []
+#     for exp in range(1, str_cnt_exp):
+#         str_cnt = 10 ** exp
+#         for tar in targets:
+#             test_strings = generate_strings(tar, str_cnt)
+#             dyn_results = dynamic(tar, test_strings, max_edits)
+#             auto_results = automaton(tar, test_strings, max_edits)
+#             results.append((dyn_results, auto_results, tar, str_cnt))
+#             print(tar)
+#
+#     # Gather the results and write them to a CSV file
+#     with open("../data/comparison.csv", "w") as f:
+#         f.write("target,pass_fail,target_size, target_unique, guess_string_count,dyn_calcs,auto_calcs\n")
+#         for result in results:
+#             dyn, auto, target, str_cnt = result
+#             dyn_results, dyn_calcs = dyn
+#             auto_results, auto_calcs = auto
+#             f.write(
+#                 f"{target},{'PASS' if dyn_results == auto_results else 'FAIL'},{len(target)},{len(set(target))},{str_cnt},{dyn_calcs},{auto_calcs}\n")
 #
 #
-# def multi_proc_loop():
-#     with multiprocessing.Pool() as pool:
-#         chris_results = pool.map(christofides, range(number_of_paths))
-#         held_results = pool.map(held_karp, range(number_of_paths))
-#         nearest_results = pool.map(nearest_neighbor, range(number_of_paths))
-#     return chris_results, held_results, nearest_results
-#
-#
-#
+# if __name__ == "__main__":
+#     start_time = time.time()
+#     main()
+#     duration = time.time() - start_time
+#     print(f"Duration: {duration} seconds")

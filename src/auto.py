@@ -1,20 +1,18 @@
-from src import utils
-from utils import targets, max_edits
+from collections import defaultdict
+# from src import utils
+from src.utils import targets, max_edits, generate_strings
 
 
 class LevenshteinAutomaton:
     def __init__(self, string, edits_dist):
+        self.Calculations = 0
         self._string = string
         self._max_edits = edits_dist
         self._states = {}
-        self._transitions = {}
+        self._transitions = defaultdict(dict)
         self._accepting = set()
         self._counter = 0
-        self._calculations = 0
         self.build(self.start())
-
-    def get_calcs(self):
-        return self._calculations
 
     def start(self):
         return tuple(range(len(self._string) + 1))
@@ -33,10 +31,15 @@ class LevenshteinAutomaton:
         return tuple(min(x, self._max_edits + 1) for x in new_state)
 
     def transitions(self, state):
-        return set(c for (i, c) in enumerate(self._string) if state[i] <= self._max_edits)
+        result_set = set()
+        for i, c in enumerate(self._string):
+            self.Calculations += 1
+            if state[i] <= self._max_edits:
+                result_set.add(c)
+        return result_set
 
     def build(self, state):
-        self._calculations += 1
+        self.Calculations += 1
         if state in self._states:
             return self._states[state]
 
@@ -56,11 +59,10 @@ class LevenshteinAutomaton:
 
         return state_id
 
-    def query(self, string):
+    def query(self, string) -> (bool, int):
         state_id = self._states[self.start()]
-        print(self._transitions)
         for c in string:
-            self._calculations += 1
+            self.Calculations += 1
             if c in self._transitions[state_id]:
                 state_id = self._transitions[state_id][c]
             elif '*' in self._transitions[state_id]:
@@ -68,6 +70,35 @@ class LevenshteinAutomaton:
             else:
                 return False
         return state_id in self._accepting
+
+    # def build(self, state):
+    #     # self.Calculations += 1
+    #     if state in self._states:
+    #         return self._states[state]
+    #     state_id = self._counter
+    #     self._counter += 1
+    #     self._states[state] = state_id
+    #     if self.is_match(state):
+    #         self._accepting.add(state_id)
+    #     transitions = self.transitions(state)
+    #     for c in transitions | {'*'}:
+    #         new_state = self.step(state, c)
+    #         if self.can_match(new_state):
+    #             new_state_id = self.build(new_state)
+    #             self._transitions[state_id][c] = new_state_id
+    #     return state_id
+
+    # def query(self, string):
+    #     state_id = self._states[self.start()]
+    #     for c in string:
+    #         self.Calculations += 1
+    #         if c in self._transitions[state_id]:
+    #             state_id = self._transitions[state_id][c]
+    #         elif '*' in self._transitions[state_id]:
+    #             state_id = self._transitions[state_id]['*']
+    #         else:
+    #             return False
+    #     return state_id in self._accepting
 
 
 def solve(target: str, max_edits: int, test_strings: list[str]) -> tuple[list[bool], int]:
@@ -77,22 +108,41 @@ def solve(target: str, max_edits: int, test_strings: list[str]) -> tuple[list[bo
         result = auto.query(string)
         results.append(result)
 
-    return results, auto.get_calcs()
+    return results, auto.Calculations
 
 
 if __name__ == "__main__":
     for target in targets:
-        test_strings = utils.generate_strings(target)
+        test_strings = generate_strings(target, 100)
         results, calcs = solve(targets, max_edits, test_strings)
-        print(results)
+        # print(results)
         print(calcs)
 
+# def solve(target: str, max_edits: int, test_strings: list[str]) -> tuple[list[bool], int]:
+#     auto = LevenshteinAutomaton(target, max_edits)
+#     results = []
+#     for string in test_strings:
+#         results.append(auto.query(string))
+#     return results, auto.Calculations
+#
+#
+# if __name__ == "__main__":
+#     from src.utils import targets, max_edits, generate_strings
+#
+#     for target in targets:
+#         test_strings = generate_strings(target, 100)
+#         results, calcs = solve(targets, max_edits, test_strings)
+#         # print(results)
+#         print(calcs)
+
+#
+#
 # class LevenshteinAutomaton:
 #     def __init__(self, string, edits_dist):
 #         self._string = string
 #         self._max_edits = edits_dist
 #         self._states = {}
-#         self._transitions = []
+#         self._transitions = {}
 #         self._accepting = set()
 #         self._counter = 0
 #         self._calculations = 0
@@ -118,18 +168,18 @@ if __name__ == "__main__":
 #         return tuple(min(x, self._max_edits + 1) for x in new_state)
 #
 #     def transitions(self, state):
+#         self._calculations += 1
 #         return set(c for (i, c) in enumerate(self._string) if state[i] <= self._max_edits)
 #
 #     def build(self, state):
-#
-#         self._calculations += 1
-#
+#         # self._calculations += 1
 #         if state in self._states:
 #             return self._states[state]
 #
 #         state_id = self._counter
 #         self._counter += 1
 #         self._states[state] = state_id
+#         self._transitions[state_id] = {}
 #
 #         if self.is_match(state):
 #             self._accepting.add(state_id)
@@ -138,21 +188,20 @@ if __name__ == "__main__":
 #             new_state = self.step(state, c)
 #             if self.can_match(new_state):
 #                 new_state_id = self.build(new_state)
-#                 self._transitions.append((state_id, new_state_id, c))
+#                 self._transitions[state_id][c] = new_state_id
 #
 #         return state_id
 #
-#     def query(self, string):
-#         state = self.start()
-#         state_id = self._states[state]
+#     def query(self, string) -> (bool, int):
+#         state_id = self._states[self.start()]
+#         # print(self._transitions)
 #         for c in string:
-#             next_state_id = None
-#             for from_id, to_id, trans_char in self._transitions:
-#                 self._calculations += 1
-#                 if from_id == state_id and (trans_char == c or trans_char == '*'):
-#                     next_state_id = to_id
-#                     break
-#             if next_state_id is None:
-#                 return False
-#             state_id = next_state_id
-#         return state_id in self._accepting
+#             # self._calculations += 1
+#             if c in self._transitions[state_id]:
+#                 state_id = self._transitions[state_id][c]
+#             elif '*' in self._transitions[state_id]:
+#                 state_id = self._transitions[state_id]['*']
+#             else:
+#                 return False, self._calculations
+#         return state_id in self._accepting, self._calculations
+#
