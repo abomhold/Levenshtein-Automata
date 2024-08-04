@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # Gather the results and write them to a CSV file
     with open("../data/comparison.csv", "w") as f:
-        f.write("target,pass_fail,target_size, target_unique, guess_string_count,dyn_calcs,auto_calcs\n")
+        f.write("target,pass_fail,target_size,target_unique,guess_string_count,dyn_calcs,auto_calcs\n")
         for result in results:
             dyn, auto, target, str_cnt = result
             dyn_results, dyn_calcs = dyn
