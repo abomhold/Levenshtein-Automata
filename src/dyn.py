@@ -13,10 +13,6 @@ def lev_dyn(str1, str2, max_edits):
     str2_len = len(str2)
     calculations = 0
 
-    # If the length difference is greater than max_edits, it can't be within the edit distance
-    if abs(str1_len - str2_len) > max_edits:
-        return False, calculations
-
     # Initialize previous_row as a list instead of a range
     previous_row = list(range(str2_len + 1))
     current_row = [0] * (str2_len + 1)

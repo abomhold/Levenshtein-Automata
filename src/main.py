@@ -4,7 +4,7 @@ from src import dyn
 from src import auto
 from src.utils import generate_strings, targets, max_edits
 
-str_cnt_exp = 6
+str_cnt_exp = 5
 
 
 def dynamic(target: str, guesses: list[str], max_edits: int) -> (list[bool], int):
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     duration = time.perf_counter() - start_time
 
     # Gather the results and write them to a CSV file
-    with open("../data/comparison.csv", "w") as f:
+    with open("../comparison.csv", "w") as f:
         f.write("target,pass_fail,target_size,target_unique,guess_string_count,dyn_calcs,auto_calcs\n")
         for result in results:
             dyn, auto, target, str_cnt = result

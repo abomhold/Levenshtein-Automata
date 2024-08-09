@@ -43,12 +43,11 @@ class LevenshteinAutomaton:
         result_set = set()
         for i, c in enumerate(self._string):
             self.Calculations += 1
-            if state[i] <= self._max_edits:
+            if self.can_match(state):
                 result_set.add(c)
         return result_set
 
     def build(self, state):
-        self.Calculations += 1
         if state in self._states:
             return self._states[state]
 
