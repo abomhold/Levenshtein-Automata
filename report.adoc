@@ -5,7 +5,7 @@ Austin Bomhold
 :pdf-fontsdir: theme/fonts
 :iconsdir: theme/icons
 :pdf-theme: tutorial.yml
-:sourcedir: src
+// :sourcedir: src
 :title-page:
 
 == Introduction
@@ -221,123 +221,12 @@ Allowing us to more easily compare the cost of building the automaton to the cos
 
 == Results
 
-_(note: I did not have time for graphs, and as I'll explain later, I'm really not sure how to visualize the data)_
-
 For the first pattern, the automaton performed as expected.
-
-|===
-|target|guess_string_count|dyn_calcs|auto_calcs
-
-|AB
-|10
-|40
-|46
-
-|ABC
-|10
-|90
-|108
-
-|ABCD
-|10
-|160
-|207
-
-|ABCDE
-|10
-|225
-|334
-
-|ABCDEF
-|10
-|240
-|483
-
-|ABCDEFG
-|10
-|273
-|671
-
-|ABCDEFGH
-|10
-|328
-|888
-
-|ABCDEFGHI
-|10
-|342
-|1134
-
-|ABCDEFGHIJ
-|10
-|350
-|1415
-
-|ABCDEFGHIJK
-|10
-|396
-|1731
-
-|===
-
 As you can see, the unique characters in the target string have a significant impact on the automaton's build time.
 Which combined with a small search space, the dynamic programming algorithm handily outperform the automaton.
 The automaton's runtime is dominated by the build time, and the need to consider all possible transitions for each unique character.
 
-|===
-|target|guess_string_count|dyn_calcs|auto_calcs
-
-|AB
-|10
-|40
-|46
-
-|ABA
-|10
-|90
-|99
-
-|ABAB
-|10
-|160
-|180
-
-|ABABA
-|10
-|250
-|290
-
-|ABABAB
-|10
-|360
-|431
-
-|ABABABA
-|10
-|490
-|599
-
-|ABABABAB
-|10
-|584
-|786
-
-|ABABABABA
-|10
-|783
-|1021
-
-|ABABABABAB
-|10
-|840
-|1256
-
-|ABABABABABA
-|10
-|935
-|1528
-
-|===
+image::data/plot1.png[]
 
 A similar trend is seen in the second pattern, but the automaton's runtime is less affected by the length of the target string.
 Interestingly, the dynamic programming algorithm's runtime is more affected by the length of the target string, compared to the number of unique characters.
@@ -345,85 +234,16 @@ However, the automaton's build stage still dominates, and the automaton is unabl
 
 We then compared how the most complex target string from each pattern performed against the number of guess strings.
 Starting with the unique character pattern we have the following results.
-
-|===
-|target|guess_string_count|dyn_calcs|auto_calcs
-
-|ABCDEFGHIJK
-|10
-|396
-|1,731
-
-|
-|100
-|4,004
-|2,051
-
-|
-|1,000
-|39,567
-|5,293
-
-|
-|10,000
-|396,583
-|37,827
-
-|
-|100,000
-|3,969,009
-|362,655
-
-|
-|1,000,000
-|39,717,348
-|3,613,266
-
-|===
-
 Here we start to see the automaton's advantage.
 Even using the worst case target string for the build process, the automaton is able to outperform the dynamic programming algorithm at a guess string count as little as 100.
 The automaton's runtime scales linearly with the guess string count, while the dynamic programming algorithm's runtime scales quadratically.
 This is the first factor where the automaton is able to outperform the dynamic programming algorithm, and it is due to the automaton's ability to traverse the search space in linear time.
 
+
+image::data/plot2.png[]
+
 This brings us to the second pattern and the most complex target string from that pattern.
 Here the automaton's advantage is even more pronounced, but also offers some counterintuitive results.
-
-|===
-|target|guess_string_count|dyn_calcs|auto_calcs
-
-|ABABABABABA
-|10
-|935
-|1,528
-
-|
-|100
-|9,339
-|2,213
-
-|
-|1,000
-|95,359
-|9,253
-
-|
-|10,000
-|952,457
-|79,777
-
-|
-|100,000
-|9,500,623
-|781,892
-
-|
-|1,000,000
-|95,052,067
-|7,808,068
-
-|===
-
 As mentioned, the automaton definitely outperforms the dynamic programming algorithm.
 With the guess string count at 10^7, the automaton is able to process the search space in less than a tenth of the calculations of the dynamic programming algorithm.
 However, the automaton's runtime is considerably higher than the unique character pattern.

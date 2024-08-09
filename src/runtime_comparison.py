@@ -1,11 +1,6 @@
 import math
 
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-
-min_nodes: int = 4
-max_nodes: int = 14
 
 
 def generate_1_plot() -> None:
@@ -24,16 +19,16 @@ def generate_1_plot() -> None:
     plt.plot(x_values, [math.log(x) * x ** 3 + 40 for x in range(1, 11)], label='n³lg(n)', color='grey', linestyle=':')
 
     ax.set(
-        xlabel='String Length',
+        xlabel='Target Length',
         ylabel='Number of Calculations',
-        title='Number of Calculations vs. Target (n=10)',
+        title='Number of Calculations vs. Target Length (Guess Strings = 10)',
         xmargin=.03,
     )
-    # ax.set_xscale('symlog', base=2)
     fig.set_size_inches(12, 8)
     fig.legend(loc='upper left')
     plt.grid(True)
     plt.xticks(rotation=45)
+    plt.savefig('../data/plot1.png')
     plt.show()
     plt.close()
 
@@ -52,20 +47,22 @@ def generate_2_plot() -> None:
     plt.plot(x_values, auto_data2, color='purple', label='Automaton (Pattern 2)', marker='s')
     ax.plot(x_values, [x for x in x_values], label='n', color='grey', linestyle=':')
     ax.plot(x_values, [x * math.log(x, 2) for x in x_values], label='nlg(n)', color='grey', linestyle=':')
+    ax.plot(x_values, [x * (math.log(x, 2) ** 2) for x in x_values], label='nlg(n)²', color='grey', linestyle=':')
 
     ax.set(
-        xlabel='String Length',
+        xlabel='Number of Guess Strings',
         ylabel='Number of Calculations',
-        title='Number of Calculations vs. Number of Guess Strings',
+        title='Number of Calculations vs. Number of Guess Strings (Target Length = 10)',
         xmargin=.03,
     )
 
-    ax.set_yscale('symlog', base=2)
-    ax.set_xscale('symlog', base=2)
+    ax.set_yscale('log', base=2)
+    ax.set_xscale('log', base=2)
     fig.set_size_inches(12, 8)
     fig.legend(loc='upper left')
     plt.grid(True)
     plt.xticks(rotation=45)
+    plt.savefig('../data/plot2.png')
     plt.show()
     plt.close()
 
