@@ -222,7 +222,7 @@ As you can see, the unique characters in the target string significantly impact 
 Combined with a small search space, the dynamic programming algorithm handily outperforms the automaton.
 The automaton's runtime is dominated by the build time and the need to consider all possible transitions for each unique character.
 
-image::data/plot1.png[]
+image::plot1.png[]
 
 A similar trend is seen in the second pattern, but the automaton's runtime is less affected by the length of the target string.
 Interestingly, the dynamic programming algorithm's runtime is more affected by the length of the target string than by the number of unique characters.
@@ -234,7 +234,7 @@ Here, we start to see the automaton's advantage.
 Even using the worst case target string for the build process, the automaton is able to outperform the dynamic programming algorithm at a guess string count as little as 100. The automaton's runtime scales linearly with the guess string count, while the dynamic programming algorithm's runtime scales quadratically.
 This is the first factor where the automaton is able to outperform the dynamic programming algorithm, and it is due to the automaton's ability to traverse the search space in linear time.
 
-image::data/plot2.png[]
+image::plot2.png[]
 
 The results of this project show that the automaton is indeed a tractable alternative to the dynamic programming algorithm.
 And generally, both algorithms perform as expected.
